@@ -1,0 +1,34 @@
+{
+  "name": "@rgnu/flex-gateway-as-sdk",
+  "description": "Use this SDK to write extensions for the Flex Gateway WASM ABI",
+  "version": "0.1.14",
+  "main": "assembly/index.ts",
+  "scripts": {
+    "asbuild": "asc assembly/index.ts -b build/optimized.wasm --use abort=abort_proc_exit -t build/optimized.wat --sourceMap --optimize"
+  },
+  "devDependencies": {
+    "assemblyscript": "^0.19.22",
+    "@serial-as/json": "^1.0.2"
+  },
+  "directories": {
+  },
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rgnu/flex-gateway-as-sdk.git"
+  },
+  "keywords": [
+    "wasm",
+    "flex-gateway"
+  ],
+  "license": " Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/rgnu/flex-gateway-as-sdk/issues"
+  },
+  "homepage": "https://github.com/rgnu/flex-gateway-as-sdk#readme",
+  "files": [
+    "/assembly",
+    "package-lock.json",
+    "index.js"
+  ]
+}
