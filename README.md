@@ -59,7 +59,7 @@ To build, simply run:
 npm run asbuild
 ```
 
-build results will be in the build folder. `optimized.wasm` are the compiled 
+build results will be in the build folder. `release.wasm` are the compiled 
 file that we will use.
 
 ## Run
@@ -76,6 +76,6 @@ Configure envoy with your filter:
                   runtime: "envoy.wasm.runtime.v8"
                   code:
                     local:
-                      filename: /PATH/TO/CODE/build/optimized.wasm
+                      filename: /PATH/TO/CODE/build/release.wasm
                   allow_precompiled: false
 ```

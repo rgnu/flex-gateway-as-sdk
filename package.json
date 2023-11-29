@@ -4,7 +4,7 @@
   "version": "0.1.14",
   "main": "assembly/index.ts",
   "scripts": {
-    "asbuild": "asc assembly/index.ts -b build/optimized.wasm --use abort=abort_proc_exit -t build/optimized.wat --sourceMap --optimize"
+    "asbuild": "asc assembly/index.ts --target release"
   },
   "devDependencies": {
   },
