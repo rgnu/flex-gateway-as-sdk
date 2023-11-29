@@ -9,14 +9,11 @@ import {
     FilterHeadersStatusValues,
     stream_context,
     send_local_response,
-} from "./runtime";
-
-import {
     log,
     get_property,
     get_current_time_nanoseconds
-    //@ts-ignore
-} from "@solo-io/proxy-runtime/runtime"
+} from "./runtime";
+
 
 import { parse } from '@serial-as/json'
 
@@ -49,7 +46,7 @@ class ApiContext {
     policyConfig: PolicyConfig = new PolicyConfig()
 }
 
-export class BaseRootContext extends RootContext {
+export class FlexRootContext extends RootContext {
     apiContext: ApiContext = new ApiContext()
     apiName: string = ""
     policyName: string = ""
@@ -159,7 +156,7 @@ export class BaseRootContext extends RootContext {
     }
 }
 
-export class BaseContext<T extends BaseRootContext> extends Context {
+export class FlexContext<T extends FlexRootContext> extends Context {
     root_context: T;
     request_id: string = ""
 
