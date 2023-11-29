@@ -6,22 +6,21 @@ Clone this repo to somewhere on disk.
 
 Create a new project:
 ```shell
-npm install --save-dev assemblyscript
+npm install --save-dev assemblyscript@0.19.22
 npx asinit .
 ```
 
-add `--use abort=abort_proc_exit` to the `asc` in packages.json. for example:
+add `--use abort=abort_proc_exit --transform @serial-as/transform` to the `asc` in packages.json. for example:
 ```json
-    "asbuild:untouched": "asc assembly/index.ts -b build/untouched.wasm --use abort=abort_proc_exit -t build/untouched.wat --sourceMap http://127.0.0.1:8081/build/untouched.wasm.map --debug",
-    "asbuild:optimized": "asc assembly/index.ts -b build/optimized.wasm --use abort=abort_proc_exit -t build/optimized.wat --sourceMap --optimize",
+    "asbuild": "asc assembly/index.ts -b build/optimized.wasm --use abort=abort_proc_exit --transform @serial-as/transform --optimize",
 ```
 
-Add `"@solo-io/proxy-runtime": "file:/home/yuval/Projects/solo/proxy-assemblyscript"` to your dependencies.
+Add `"@rgnu/flex-gateway-as-sdk": "https://github.com/rgnu/flex-gateway-as-sdk.git"` to your dependencies.
 run `npm install`
 
 # using NPM
 
-Just include the `@solo-io/proxy-runtime` package.
+Just include the `@rgnu/flex-gateway-as-sdk` package.
 
 # Hello, World
 
@@ -29,31 +28,29 @@ Just include the `@solo-io/proxy-runtime` package.
 Copy this into assembly/index.ts:
 
 ```ts
-export * from "@rgnu/proxy-runtime/proxy"; // this exports the required functions for the proxy to interact with us.
-import { RootContext, Context, registerRootContext, FilterHeadersStatusValues, stream_context } from "@rgnu/proxy-runtime";
+//@ts-ignore
+export * from "@rgnu/flex-gateway-as-sdk/proxy"; // this exports the required functions for the proxy to interact with us.
 
-class AddHeaderRoot extends RootContext {
+import { Context, FilterHeadersStatusValues, FlexContext, FlexRootContext, registerRootContext } from "@rgnu/flex-gateway-as-sdk";
+
+class Config {
+    greeting: string = "Hello!"
+}
+
+class AddHeaderRoot extends FlexRootContext {
   createContext(context_id: u32): Context {
     return new AddHeader(context_id, this);
   }
 }
 
-class AddHeader extends Context {
-  constructor(context_id: u32, root_context: AddHeaderRoot) {
-    super(context_id, root_context);
-  }
+class AddHeader extends FlexContext<AddHeaderRoot> {
   onResponseHeaders(a: u32, end_of_stream: bool): FilterHeadersStatusValues {
-    const root_context = this.root_context;
-    if (root_context.getConfiguration() == "") {
-      stream_context.headers.response.add("hello", "world!");
-    } else {
-      stream_context.headers.response.add("hello", root_context.getConfiguration());
-    }
+    this.addResponseHeader("x-greeting", "Hello!")
     return FilterHeadersStatusValues.Continue;
   }
 }
 
-registerRootContext((context_id: u32) => { return new AddHeaderRoot(context_id); }, "add_header");
+registerRootContext((context_id: u32) => { return new AddHeaderRoot(context_id); }, "main");
 ```
 ## build
 
@@ -62,8 +59,8 @@ To build, simply run:
 npm run asbuild
 ```
 
-build results will be in the build folder. `untouched.wasm` and `optimized.wasm` are the compiled 
-file that we will use (you only need one of them, if unsure use `optimized.wasm`).
+build results will be in the build folder. `optimized.wasm` are the compiled 
+file that we will use.
 
 ## Run
 Configure envoy with your filter:
@@ -72,7 +69,7 @@ Configure envoy with your filter:
             config:
               config:
                 name: "add_header"
-                root_id: "add_header"
+                root_id: "main"
                 configuration: "what ever you want"
                 vm_config:
                   vm_id: "my_vm_id"
