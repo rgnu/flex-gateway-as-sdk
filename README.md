@@ -15,7 +15,7 @@ add `--use abort=abort_proc_exit --transform @serial-as/transform` to the `asc` 
     "asbuild": "asc assembly/index.ts -b build/optimized.wasm --use abort=abort_proc_exit --transform @serial-as/transform --optimize",
 ```
 
-Add `"@rgnu/flex-gateway-as-sdk": "https://github.com/rgnu/flex-gateway-as-sdk.git"` to your dependencies.
+Add `"@rgnu/flex-gateway-as-sdk": "github:rgnu/flex-gateway-as-sdk"` to your dependencies.
 run `npm install`
 
 # using NPM

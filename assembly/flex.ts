@@ -46,11 +46,24 @@ class ApiContext {
     policyConfig: PolicyConfig = new PolicyConfig()
 }
 
-export class FlexRootContext extends RootContext {
-    apiContext: ApiContext = new ApiContext()
-    apiName: string = ""
-    policyName: string = ""
-    logLevel: LogLevelValues = LogLevelValues.info
+export class FlexRootContext<C> extends RootContext {
+    policyConfig: C;
+    apiContext: ApiContext
+    apiName: string
+    policyName: string
+    logLevel: LogLevelValues
+
+    constructor(context_id: u32, config: C) {
+        super(context_id);
+
+        this.apiName = "";
+        this.apiContext = new ApiContext();
+
+        this.policyName = "";
+        this.policyConfig = config;
+        this.logLevel = LogLevelValues.info;
+
+    }
 
     getContextId(): u32 {
         return this.context_id;
@@ -66,6 +79,10 @@ export class FlexRootContext extends RootContext {
 
     getPolicyName(): String {
         return this.policyName;
+    }
+
+    getPolicyConfig(): C {
+        return this.policyConfig;
     }
 
     getLogLevel(): LogLevelValues {
@@ -154,9 +171,17 @@ export class FlexRootContext extends RootContext {
 
         return true;
     }
+
+    onConfigure(size: u32): bool {
+        if (size > 0 && super.onConfigure(size)) {
+            this.policyConfig = parse<C>(this.getConfiguration());
+        }
+
+        return true;
+    }
 }
 
-export class FlexContext<T extends FlexRootContext> extends Context {
+export class FlexContext<T extends FlexRootContext<any>> extends Context {
     root_context: T;
     request_id: string = ""
 
